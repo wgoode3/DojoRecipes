@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DojoRecipes</title>
+</head>
+<body>
+	<h1>Dojo Recipes</h1>
+
+	<p>Welcome back {{ current_user.username }}!</p>
+	<a href="/logout">Logout</a>
+
+	{% for recipe in recipes %}
+		<h3>{{recipe.name}}</h3>
+		<h4>Uploaded by: {{recipe.creator.username}}</h4>
+		<h4>Ingredients:</h4>
+		<ul>
+			{% for ingredient in recipe.ingredients.all %}
+				<li>
+					{{ingredient.ingredient.name}} 
+					{{ingredient.amount}} 
+					{{ingredient.units}}
+				</li>
+			{% endfor %}
+		</ul>
+		<h4>Instructions:</h4>
+		<pre>{{recipe.instructions}}</pre>
+		<a href="/like/{{recipe.id}}">
+			<button>
+				Likes: 
+				{{ recipe.likes.all | length }}
+			</button>
+		</a>
+		<hr>
+	{% endfor %}
+
+	<form action="/recipe" method="post">
+		{% csrf_token %}
+		Recipe name: <input type="text" name="name"><br>
+		Ingredients:<br><textarea name="ingredients" rows="10" cols="80" placeholder="eg. salmon 2 fillets, feta cheese 3 oz, lemon zest 1/2 tbsp, dill 1/4 tbsp"></textarea><br>
+		Instructions:<br><textarea name="instructions" rows="10" cols="80"></textarea><br>
+		<input type="submit" value="Upload Recipe">
+	</form>
+
+	{% if messages %}
+	<ul class="messages">
+	    {% for message in messages %}
+	    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	    {% endfor %}
+	</ul>
+	{% endif %}
+
+</body>
+</html>
